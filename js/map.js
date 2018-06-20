@@ -47,6 +47,15 @@ var PHOTOS = [
 var OBJECTS_COUNT = 8;
 var PIN_WIDTH = 40;
 var PIN_HEIGHT = 40;
+var MAIN_PIN_SIZE = {
+  x: 62,
+  y: 62
+};
+var mainPinStartCoords = {
+  x: '570px',
+  y: '375px'
+};
+var ESC_KEY_CODE = 27;
 // Массив для хранения уже использующихся заголовков.
 var usedTitles = [];
 //
@@ -58,13 +67,10 @@ var mapCard = mapPinTemplate.content.querySelector('.map__card');
 var photosGroup = mapCard.querySelector('.popup__photos');
 var photoElem = photosGroup.querySelector('img');
 photosGroup.removeChild(photoElem);
-var featuresList = mapCard.querySelector('.popup__features');
 
 // Секция для вставки меток.
-var mapPins = document.querySelector('.map__pins');
+var mapPinsGroup = document.querySelector('.map__pins');
 var mapPin = document.querySelector('template').content.querySelector('.map__pin');
-// Группа меток для вставки на страницу.
-var pinsGroup = document.createDocumentFragment();
 
 var getRandom = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -87,7 +93,7 @@ var compareRandom = function () {
 var compareRandomArr = function (arr) {
   return arr.sort(compareRandom);
 };
-// Функция массива строк случайно длины
+// Функция массива строк случайно длинны
 var randomLengthArr = function (arr) {
   var indexForSlice = getRandom(-arr.length, arr.length - 1);
   var resultArr = arr.slice(0);
@@ -112,7 +118,7 @@ var convertOfferType = function (type) {
   }
   return offerType;
 };
-// СОздание объекта.
+// Создание объекта.
 var createObject = function (avatarCount) {
   var title = nonEqualRandom(TITLE, usedTitles);
   usedTitles.push(title);
@@ -155,8 +161,9 @@ var getObjects = function (count) {
     // console.log(estateObjects[i]);
   }
   return estateObjects;
-};
 
+};
+var estateObjects = getObjects(OBJECTS_COUNT);
 
 var configPin = function (estateObject) {
   var newPin = mapPin.cloneNode(true);
@@ -168,13 +175,6 @@ var configPin = function (estateObject) {
   return newPin;
 };
 // Отрисовка метки
-var renderPins = function (pins) {
-  for (var i = 0; i < pins.length; i++) {
-    pinsGroup.appendChild(configPin(pins[i]));
-  }
-  mapPins.appendChild(pinsGroup);
-
-};
 var renderPhotos = function (photosArray) {
 
   var photosFragment = document.createDocumentFragment();
@@ -189,11 +189,39 @@ var renderFeatures = function (features) {
   var featureFragment = document.createDocumentFragment();
 
   for (var i = 0; i < features.length; i++) {
-    var newFeature = featuresList.querySelector('.popup__feature--' + features[i]);
-    featureFragment.appendChild(newFeature);
+    var featureElement = document.createElement('li');
+    featureElement.classList.add('popup__feature');
+    featureElement.classList.add('popup__feature--' + features[i]);
+    featureFragment.appendChild(featureElement);
   }
-
   return featureFragment;
+};
+var renderPins = function (pins) {
+  for (var i = 0; i < pins.length; i++) {
+    var pinElement = configPin(pins[i]);
+    mapPinsGroup.appendChild(pinElement);
+    addPinClickHandler(pinElement, pins[i]);
+  }
+};
+var closeCard = function () {
+  if (map.querySelector('.map__card')) {
+    map.removeChild(map.querySelector('.map__card'));
+  }
+};
+var cardEscPressHandler = function (evt) {
+  if (evt.keyCode === ESC_KEY_CODE) {
+    closeCard();
+  }
+};
+var mapFiltersContainer = map.querySelector('.map__filters-container');
+var addPinClickHandler = function (pinElement, pin) {
+  pinElement.addEventListener('click', function () {
+    closeCard();
+    var cardElem = renderCard(pin);
+    cardElem.querySelector('.popup__close').addEventListener('click', closeCard);
+    map.insertBefore(cardElem, mapFiltersContainer);
+    document.addEventListener('keydown', cardEscPressHandler);
+  });
 };
 
 
@@ -214,10 +242,56 @@ var renderCard = function (estateObject) {
   return cardElement;
 };
 
-var showMap = function () {
-  var estateObjects = getObjects(OBJECTS_COUNT);
-  renderPins(estateObjects);
-  map.insertBefore(renderCard(estateObjects[0]), map.querySelector('.map__filters-container'));
-  map.classList.remove('map--faded');
+// Элементы для событий
+var infoForm = document.querySelector('.ad-form');
+var fieldsForm = infoForm.querySelectorAll('.ad-form__element');
+var mainPin = document.querySelector('.map__pin--main');
+var addressField = infoForm.querySelector('#address');
+var avatarLoad = infoForm.querySelector('.ad-form-header__input');
+
+var getMainPinPosition = function () {
+  var mainPinPosition = {
+    x: mainPin.offsetLeft + Math.floor(MAIN_PIN_SIZE.x / 2),
+    y: mainPin.offsetTop + MAIN_PIN_SIZE.y
+  };
+  return mainPinPosition;
 };
-showMap();
+
+var getAddress = function (position) {
+  addressField.value = position.x + ', ' + position.y;
+};
+var disableForm = function () {
+
+  for (var i = 0; i < fieldsForm.length; i++) {
+    fieldsForm[i].setAttribute('disabled', true);
+  }
+  avatarLoad.setAttribute('disabled', true);
+};
+var enableForm = function () {
+  for (var i = 0; i < fieldsForm.length; i++) {
+    fieldsForm[i].removeAttribute('disabled');
+  }
+  avatarLoad.removeAttribute('disabled');
+  infoForm.classList.remove('ad-form--disabled');
+};
+var enablePage = function () {
+  map.classList.remove('map--faded');
+  enableForm();
+  renderPins(estateObjects);
+};
+
+var mainPinMouseUpHandler = function () {
+  getAddress(getMainPinPosition());
+  enablePage();
+};
+var disablePage = function () {
+  mainPin.style.left = mainPinStartCoords.x;
+  mainPin.style.top = mainPinStartCoords.y;
+  getAddress(getMainPinPosition());
+  disableForm();
+};
+
+disablePage();
+// Включение активного режима карты
+mainPin.addEventListener('mouseup', mainPinMouseUpHandler);
+
