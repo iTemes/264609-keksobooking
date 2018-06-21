@@ -64,7 +64,6 @@ var map = document.querySelector('.map');
 var mapPinTemplate = document.querySelector('template');
 // Шаблон карточки
 var mapCard = mapPinTemplate.content.querySelector('.map__card');
-var estateCard = map.querySelector('.map__card');
 var photosGroup = mapCard.querySelector('.popup__photos');
 var photoElem = photosGroup.querySelector('img');
 photosGroup.removeChild(photoElem);
@@ -205,6 +204,7 @@ var renderPins = function (pins) {
   }
 };
 var closeCard = function () {
+  var estateCard = map.querySelector('.map__card');
   if (estateCard) {
     map.removeChild(estateCard);
   }
