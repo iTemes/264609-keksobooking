@@ -64,6 +64,7 @@ var map = document.querySelector('.map');
 var mapPinTemplate = document.querySelector('template');
 // Шаблон карточки
 var mapCard = mapPinTemplate.content.querySelector('.map__card');
+var estateCard = map.querySelector('.map__card');
 var photosGroup = mapCard.querySelector('.popup__photos');
 var photoElem = photosGroup.querySelector('img');
 photosGroup.removeChild(photoElem);
@@ -93,7 +94,7 @@ var compareRandom = function () {
 var compareRandomArr = function (arr) {
   return arr.sort(compareRandom);
 };
-// Функция массива строк случайно длинны
+// Функция массива строк случайной длины
 var randomLengthArr = function (arr) {
   var indexForSlice = getRandom(-arr.length, arr.length - 1);
   var resultArr = arr.slice(0);
@@ -204,8 +205,8 @@ var renderPins = function (pins) {
   }
 };
 var closeCard = function () {
-  if (map.querySelector('.map__card')) {
-    map.removeChild(map.querySelector('.map__card'));
+  if (estateCard) {
+    map.removeChild(estateCard);
   }
 };
 var cardEscPressHandler = function (evt) {
@@ -257,21 +258,23 @@ var getMainPinPosition = function () {
   return mainPinPosition;
 };
 
-var getAddress = function (position) {
+var setPosition = function (position) {
   addressField.value = position.x + ', ' + position.y;
 };
 var disableForm = function () {
 
   for (var i = 0; i < fieldsForm.length; i++) {
-    fieldsForm[i].setAttribute('disabled', true);
+    fieldsForm[i].disabled = true;
   }
-  avatarLoad.setAttribute('disabled', true);
+  avatarLoad.disabled = true;
+  infoForm.classList.add('ad-form--disabled');
+  infoForm.reset();
 };
 var enableForm = function () {
   for (var i = 0; i < fieldsForm.length; i++) {
-    fieldsForm[i].removeAttribute('disabled');
+    fieldsForm[i].disabled = false;
   }
-  avatarLoad.removeAttribute('disabled');
+  avatarLoad.disabled = false;
   infoForm.classList.remove('ad-form--disabled');
 };
 var enablePage = function () {
@@ -281,17 +284,17 @@ var enablePage = function () {
 };
 
 var mainPinMouseUpHandler = function () {
-  getAddress(getMainPinPosition());
+  setPosition(getMainPinPosition());
   enablePage();
 };
 var disablePage = function () {
+  disableForm();
   mainPin.style.left = mainPinStartCoords.x;
   mainPin.style.top = mainPinStartCoords.y;
-  getAddress(getMainPinPosition());
-  disableForm();
+  setPosition(getMainPinPosition());
+  map.classList.add('map--faded');
 };
 
 disablePage();
 // Включение активного режима карты
 mainPin.addEventListener('mouseup', mainPinMouseUpHandler);
-
