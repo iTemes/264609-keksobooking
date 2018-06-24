@@ -296,15 +296,12 @@ var disablePage = function () {
   map.classList.add('map--faded');
 };
 var removePins = function () {
-  console.log(mapPinsGroup);
   var pinElements = document.querySelectorAll('.map__pin');
   for (var i = 0; i < pinElements.length; i++) {
-    if(pinElements[i] !== mainPin) {
+    if (pinElements[i] !== mainPin) {
       pinElements[i].remove();
     }
   }
-
-  console.log('удаление пинов!!!');
 };
 disablePage();
 // Включение активного режима карты
@@ -351,9 +348,6 @@ var timeOutChangeHandler = function () {
   }
 };
 var roomAndCapacityChangeHandler = function (evt) {
-  console.log(roomNum.value + '  :Кол-во комнат');
-  console.log(capacity.value + '  :Кол-во гостей');
-  console.log(roomNum.value < capacity.value);
   if (roomNum.value === '100' && capacity.value !== '0') {
     evt.target.setCustomValidity('Выбор "100 комнат" соответсвует только пункту "не для гостей" в выборе "Количество мест"');
   } else if (roomNum.value !== '100' && capacity.value === '0') {
@@ -369,7 +363,6 @@ var resetPageClickHandler = function () {
   removePins();
   disablePage();
   closeCard();
-  console.log('Page disabled');
 };
 estateType.addEventListener('input', estateTypeInputHandler);
 timeIn.addEventListener('change', timeInChangeHandler);
