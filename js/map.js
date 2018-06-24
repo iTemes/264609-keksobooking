@@ -177,7 +177,6 @@ var configPin = function (estateObject) {
 };
 // Отрисовка метки
 var renderPhotos = function (photosArray) {
-
   var photosFragment = document.createDocumentFragment();
   for (var i = 0; i < photosArray.length; i++) {
     var newPhoto = photoElem.cloneNode(true);
@@ -225,7 +224,6 @@ var addPinClickHandler = function (pinElement, pin) {
     document.addEventListener('keydown', cardEscPressHandler);
   });
 };
-
 
 // Отрисовка объявления
 var renderCard = function (estateObject) {
