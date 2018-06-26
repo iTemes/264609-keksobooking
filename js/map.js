@@ -248,7 +248,7 @@ var fieldsForm = infoForm.querySelectorAll('.ad-form__element');
 var mainPin = document.querySelector('.map__pin--main');
 var addressField = infoForm.querySelector('#address');
 var avatarLoad = infoForm.querySelector('.ad-form-header__input');
-
+var pageLock = false;
 var getMainPinPosition = function () {
   var mainPinPosition = {
     x: mainPin.offsetLeft + Math.floor(MAIN_PIN_SIZE.x / 2),
@@ -280,6 +280,7 @@ var enablePage = function () {
   map.classList.remove('map--faded');
   enableForm();
   renderPins(estateObjects);
+  pageLock = true;
 };
 
 var mainPinMouseUpHandler = function () {
@@ -292,6 +293,7 @@ var disablePage = function () {
   mainPin.style.top = mainPinStartCoords.y;
   setPosition(getMainPinPosition());
   map.classList.add('map--faded');
+  pageLock = false;
 };
 var removePins = function () {
   var pinElements = document.querySelectorAll('.map__pin');
@@ -368,3 +370,51 @@ timeOut.addEventListener('change', timeOutChangeHandler);
 roomNum.addEventListener('change', roomAndCapacityChangeHandler);
 capacity.addEventListener('change', roomAndCapacityChangeHandler);
 resetPage.addEventListener('click', resetPageClickHandler);
+
+// module5-task1
+mainPin.addEventListener('mousedown', function (evt) {
+  var startCoords = {
+    x: evt.ClientX,
+    y: evt.ClientY
+  };
+  var dragLimit = {
+    x: {
+      MIN: 0,
+      MAX: 1200
+    },
+    y: {
+      MIN: 130,
+      MAX: 630
+    }
+  };
+
+  var mouseMoveHandler = function (moveEvt) {
+
+    var shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY
+    };
+
+    startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+    var mainPinCoords = getMainPinPosition();
+
+    if (pageLock) {
+      if (mainPinCoords.y - shift.y >= dragLimit.y.MIN && mainPinCoords.y - shift.y <= dragLimit.y.MAX) {
+        mainPin.style.top = mainPin.offsetTop - shift.y + 'px';
+      }
+      if (mainPinCoords.x - shift.x >= dragLimit.x.MIN && mainPinCoords.x - shift.x <= dragLimit.x.MAX) {
+        mainPin.style.left = mainPin.offsetLeft - shift.x + 'px';
+      }
+      setPosition(mainPinCoords);
+    }
+  };
+  var mouseUpHandler = function () {
+    document.removeEventListener('mousemove', mouseMoveHandler);
+    document.removeEventListener('mouseup', mouseUpHandler);
+  };
+  document.addEventListener('mousemove', mouseMoveHandler);
+  document.addEventListener('mouseup', mouseUpHandler);
+});
