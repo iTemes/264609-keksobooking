@@ -42,7 +42,7 @@
 
     var mouseMoveHandler = function (moveEvt) {
       // Включение активного режима карты
-      window.mapBlock.enablePage();
+      window.mapBlock.isMapDisabled();
       var shift = {
         x: startCoords.x - moveEvt.clientX,
         y: startCoords.y - moveEvt.clientY

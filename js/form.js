@@ -1,8 +1,7 @@
 ﻿'use strict';
 
 (function () {
-  var formSubmitButtonClickHandler = function () {
-  };
+
   var setPosition = function (position) {
     addressField.value = position.x + ', ' + position.y;
   };
@@ -21,6 +20,7 @@
     }
     avatarLoad.disabled = false;
     infoForm.classList.remove('ad-form--disabled');
+    clearRoomAndCopacity();
   };
   var clearRoomAndCopacity = function () {
     roomNum.selectedIndex = -1;
@@ -75,6 +75,53 @@
     window.mapBlock.disablePage();
   };
 
+  // Действие при успешной отправке формы
+  var submitFormSuccessHandler = function () {
+    window.mapBlock.disablePage();
+    successMessage.classList.remove('hidden');
+    document.addEventListener('click', successMessageClickHandler);
+    document.addEventListener('keydown', successMessageEscPressHandler);
+  };
+  // Действия для закрытия сообщения об успешной отправки формы
+  var closeSuccessMessage = function () {
+    successMessage.classList.add('hidden');
+    document.removeEventListener('click', successMessageClickHandler);
+    document.removeEventListener('keydown', successMessageEscPressHandler);
+  };
+  var successMessageClickHandler = function () {
+    closeSuccessMessage();
+  };
+  var successMessageEscPressHandler = function (evt) {
+    if (evt.keyCode === window.utils.ESC_KEY_CODE) {
+      closeSuccessMessage();
+    }
+  };
+  // Действия для закрытия ошибки при отправке формы
+  var closeErrorMessage = function () {
+    var error = document.querySelector('.error');
+
+    if (error) {
+      document.body.removeChild(error);
+    }
+
+    document.removeEventListener('click', errorClickHanler);
+  };
+  var errorClickHanler = function () {
+    closeErrorMessage();
+  };
+  // Отрисовка сообщения  при возникновении ошибки
+  var submitFormErrorHandler = function (textMessage) {
+    window.errorMessage.createErrorMessage(textMessage);
+    document.addEventListener('click', errorClickHanler);
+  };
+
+  // Отправка данных формы на сервер
+  var formSubmitHandler = function (evt) {
+    window.backend.upload(new FormData(infoForm), submitFormSuccessHandler, submitFormErrorHandler);
+    evt.preventDefault();
+  };
+
+  var successMessage = document.querySelector('.success');
   var infoForm = document.querySelector('.ad-form');
   var fieldsForm = infoForm.querySelectorAll('.ad-form__element');
   var addressField = infoForm.querySelector('#address');
@@ -86,9 +133,7 @@
   var roomNum = document.querySelector('#room_number');
   var capacity = document.querySelector('#capacity');
   var resetForm = document.querySelector('.ad-form__reset');
-  var formSubmitButton = document.querySelector('.ad-form__submit');
 
-  clearRoomAndCopacity();
 
   estateType.addEventListener('input', estateTypeInputHandler);
   timeIn.addEventListener('change', timeInChangeHandler);
@@ -96,7 +141,7 @@
   roomNum.addEventListener('change', roomAndCapacityChangeHandler);
   capacity.addEventListener('change', roomAndCapacityChangeHandler);
   resetForm.addEventListener('click', resetFormClickHandler);
-  formSubmitButton.addEventListener('click', formSubmitButtonClickHandler);
+  infoForm.addEventListener('submit', formSubmitHandler);
 
   window.mapForm = {
     setPosition: setPosition,
