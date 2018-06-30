@@ -114,7 +114,9 @@
   };
   // Массив с объектами
   var estateObjects = getObjects(OBJECTS_COUNT);
+
   window.dataBlock = {
-    estateObjects: estateObjects
+    estateObjects: estateObjects,
+    convertOfferType: convertOfferType
   };
 })();
