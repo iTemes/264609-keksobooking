@@ -1,13 +1,12 @@
 'use strict';
 
 (function () {
-
-  // Действия со страницей
   var enablePage = function () {
     map.classList.remove('map--faded');
     window.mapForm.enableForm();
-    window.configPinsBlock.renderPins(estateObjects);
+    window.bookingFilter.filterChangeHandler();
   };
+
   var disablePage = function () {
     window.mapForm.disableForm();
     disableMap();
@@ -25,22 +24,27 @@
     }
   };
 
-  var estateObjects = [];
+  var loadData = [];
   var map = document.querySelector('.map');
   var successHandler = function (data) {
-    estateObjects = data;
+    loadData = data;
   };
   var erorrHandler = function (textMessage) {
     window.errorMessage.createErrorMessage(textMessage);
+    document.addEventListener('click', window.mapForm.errorClickHanler);
   };
   window.backend.load(successHandler, erorrHandler);
 
   disablePage();
 
+
   window.mapBlock = {
     disablePage: disablePage,
     enablePage: enablePage,
     map: map,
-    isMapDisabled: isMapDisabled
+    isMapDisabled: isMapDisabled,
+    getLoadData: function () {
+      return loadData;
+    }
   };
 })();

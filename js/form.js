@@ -72,12 +72,13 @@
     }
   };
   var resetFormClickHandler = function () {
+    window.bookingFilter.resetFilters();
     window.mapBlock.disablePage();
   };
 
   // Действие при успешной отправке формы
   var submitFormSuccessHandler = function () {
-    window.mapBlock.disablePage();
+    resetFormClickHandler();
     successMessage.classList.remove('hidden');
     document.addEventListener('click', successMessageClickHandler);
     document.addEventListener('keydown', successMessageEscPressHandler);
