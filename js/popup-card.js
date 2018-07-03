@@ -67,21 +67,17 @@
     return featureFragment;
   };
   var convertOfferType = function (type) {
-    var offerType = '';
     switch (type) {
       case 'flat':
-        offerType = 'Квартира';
-        break;
+        return 'Квартира';
       case 'bungalo':
-        offerType = 'Бунгало';
-        break;
+        return 'Бунгало';
       case 'house':
-        offerType = 'Дом';
-        break;
+        return 'Дом';
       case 'palace':
-        offerType = 'Дворец';
+        return 'Дворец';
     }
-    return offerType;
+    return type;
   };
 
   var mapPinTemplate = document.querySelector('template');
