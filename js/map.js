@@ -4,13 +4,20 @@
   var enablePage = function () {
     map.classList.remove('map--faded');
     window.mapForm.enableForm();
+    window.bookingFilter.enableFilters();
     window.bookingFilter.filterChangeHandler();
   };
 
   var disablePage = function () {
     window.mapForm.disableForm();
+    window.bookingFilter.disableFilters();
     disableMap();
+    scrollPage();
   };
+  var scrollPage = function () {
+    window.scroll(0, 0);
+  };
+
   var disableMap = function () {
     window.configPinsBlock.removePins();
     window.popupCard.closeCard();
@@ -28,7 +35,9 @@
   var map = document.querySelector('.map');
   var successHandler = function (data) {
     loadData = data;
+    ismapActive = true;
   };
+
   var erorrHandler = function (textMessage) {
     window.errorMessage.createErrorMessage(textMessage);
     document.addEventListener('click', window.mapForm.errorClickHanler);
@@ -37,6 +46,7 @@
 
   disablePage();
 
+  var ismapActive = false;
 
   window.mapBlock = {
     disablePage: disablePage,
@@ -45,6 +55,9 @@
     isMapDisabled: isMapDisabled,
     getLoadData: function () {
       return loadData;
+    },
+    getIsMapActive: function () {
+      return ismapActive;
     }
   };
 })();

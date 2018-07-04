@@ -1,16 +1,21 @@
 ﻿'use strict';
 
 (function () {
-
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+  var DEFAULT_AVATAR_SRC = 'img/muffin-grey.svg';
   var setPosition = function (position) {
     addressField.value = position.x + ', ' + position.y;
   };
-  var disableForm = function () {
-
+  var disableFields = function () {
     for (var i = 0; i < fieldsForm.length; i++) {
       fieldsForm[i].disabled = true;
     }
-    avatarLoad.disabled = true;
+    avatarLoadInput.disabled = true;
+  };
+  var disableForm = function () {
+    resetAvatarLoad();
+    disableFields();
+    clearPhotoContainer();
     infoForm.classList.add('ad-form--disabled');
     infoForm.reset();
   };
@@ -18,7 +23,7 @@
     for (var i = 0; i < fieldsForm.length; i++) {
       fieldsForm[i].disabled = false;
     }
-    avatarLoad.disabled = false;
+    avatarLoadInput.disabled = false;
     infoForm.classList.remove('ad-form--disabled');
     clearRoomAndCopacity();
   };
@@ -93,7 +98,7 @@
     closeSuccessMessage();
   };
   var successMessageEscPressHandler = function (evt) {
-    if (evt.keyCode === window.utils.ESC_KEY_CODE) {
+    if (evt.keyCode === window.ESC_KEY_CODE) {
       closeSuccessMessage();
     }
   };
@@ -122,11 +127,70 @@
     evt.preventDefault();
   };
 
+  // Превью фотографий объявления
+  var avatarLoadChangeHandler = function () {
+    var file = avatarLoadInput.files[0];
+    var fileName = file.name.toLowerCase();
+
+    var matches = FILE_TYPES.some(function (it) {
+      return fileName.endsWith(it);
+    });
+    if (matches) {
+      var reader = new FileReader();
+      reader.addEventListener('load', function () {
+        avatarPreview.src = reader.result;
+      });
+
+      reader.readAsDataURL(file);
+    }
+  };
+  var createPhotoContainer = function (src) {
+    var newContainer = document.createElement('div');
+    var newPhoto = document.createElement('img');
+
+    newContainer.classList.add('ad-form__photo');
+    newPhoto.alt = 'Фотография жилья';
+    newPhoto.src = src;
+
+    newContainer.appendChild(newPhoto);
+    photoContainer.appendChild(newContainer);
+  };
+
+  var photoLoadChangeHandler = function () {
+    var file = photoLoadInput.files[0];
+    var fileName = file.name.toLowerCase();
+
+    var matches = FILE_TYPES.some(function (it) {
+      return fileName.endsWith(it);
+    });
+    if (matches) {
+      var reader = new FileReader();
+
+      reader.addEventListener('load', function () {
+
+        createPhotoContainer(reader.result);
+      });
+
+      reader.readAsDataURL(file);
+    }
+  };
+
+  var resetAvatarLoad = function () {
+    avatarPreview.src = DEFAULT_AVATAR_SRC;
+  };
+
+  var clearPhotoContainer = function () {
+    var descriptionPhotos = document.querySelectorAll('.ad-form__photo');
+
+    descriptionPhotos.forEach(function (item) {
+      photoContainer.removeChild(item);
+    });
+  };
+
   var successMessage = document.querySelector('.success');
   var infoForm = document.querySelector('.ad-form');
   var fieldsForm = infoForm.querySelectorAll('.ad-form__element');
   var addressField = infoForm.querySelector('#address');
-  var avatarLoad = infoForm.querySelector('.ad-form-header__input');
   var estateType = document.querySelector('#type');
   var estateMinPrice = document.querySelector('#price');
   var timeIn = document.querySelector('#timein');
@@ -134,6 +198,10 @@
   var roomNum = document.querySelector('#room_number');
   var capacity = document.querySelector('#capacity');
   var resetForm = document.querySelector('.ad-form__reset');
+  var avatarLoadInput = document.querySelector('.ad-form-header__input');
+  var avatarPreview = document.querySelector('.ad-form-header__preview').querySelector('img');
+  var photoLoadInput = document.querySelector('.ad-form__input');
+  var photoContainer = document.querySelector('.ad-form__photo-container');
 
 
   estateType.addEventListener('input', estateTypeInputHandler);
@@ -143,10 +211,13 @@
   capacity.addEventListener('change', roomAndCapacityChangeHandler);
   resetForm.addEventListener('click', resetFormClickHandler);
   infoForm.addEventListener('submit', formSubmitHandler);
+  avatarLoadInput.addEventListener('change', avatarLoadChangeHandler);
+  photoLoadInput.addEventListener('change', photoLoadChangeHandler);
 
   window.mapForm = {
     setPosition: setPosition,
     disableForm: disableForm,
-    enableForm: enableForm
+    enableForm: enableForm,
+    errorClickHanler: errorClickHanler
   };
 })();

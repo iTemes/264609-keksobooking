@@ -29,15 +29,6 @@
       return handler(estateObject);
     }
     return true;
-    // switch (priceFilter.value) {
-    //   case 'low':
-
-    //   case 'middle':
-    //     return estateObject.offer.price >= Price.MIN_PRICE && estateObject.offer.price <= Price.MIDDLE_PRICE;
-    //   case 'high':
-    //     return estateObject.offer.price > Price.MIDDLE_PRICE;
-    //   default:
-    //     return estateObject;
   };
   var sameRoomFilter = function (estateObject) {
     return estateObject.offer.rooms === +roomFilter.value || roomFilter.value === ANY_VALUE;
@@ -45,7 +36,7 @@
   var sameGuestFilter = function (estateObject) {
     return estateObject.offer.guests === +guestFilter.value || guestFilter.value === ANY_VALUE;
   };
-  var sameFeaturesFilter = function (estateObject) {
+  var everyFeaturesFilter = function (estateObject) {
     var isFeature = true;
     featuresFilter.forEach(function (feature) {
       if (feature.checked && estateObject.offer.features.indexOf(feature.value) < 0) {
@@ -59,7 +50,7 @@
             samePriceFilter(offer) &&
             sameRoomFilter(offer) &&
             sameGuestFilter(offer) &&
-            sameFeaturesFilter(offer)
+            everyFeaturesFilter(offer)
     );
   };
   var getFilteredData = function () {
@@ -72,8 +63,27 @@
     window.configPinsBlock.removePins();
     window.configPinsBlock.renderPins(filterData.slice(0, ESTATE_COUNT));
   };
+
+  var debouncedFilterData = window.debounce(renderFilteredData);
+
   var filterChangeHandler = function () {
-    window.debounce(renderFilteredData());
+    debouncedFilterData();
+  };
+  var disableFilters = function () {
+    filters.forEach(function (item) {
+      item.disabled = true;
+    });
+    featuresFilter.forEach(function (item) {
+      item.disabled = true;
+    });
+  };
+  var enableFilters = function () {
+    filters.forEach(function (item) {
+      item.disabled = false;
+    });
+    featuresFilter.forEach(function (item) {
+      item.disabled = false;
+    });
   };
 
   var resetFilters = function () {
@@ -82,6 +92,7 @@
   };
 
   var mapFilter = document.querySelector('.map__filters');
+  var filters = document.querySelectorAll('.map__filter');
   var houseTypeFilter = mapFilter.querySelector('#housing-type');
   var priceFilter = mapFilter.querySelector('#housing-price');
   var roomFilter = mapFilter.querySelector('#housing-rooms');
@@ -92,6 +103,8 @@
 
   window.bookingFilter = {
     filterChangeHandler: filterChangeHandler,
-    resetFilters: resetFilters
+    resetFilters: resetFilters,
+    disableFilters: disableFilters,
+    enableFilters: enableFilters
   };
 })();

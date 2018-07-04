@@ -39,34 +39,35 @@
         MAX: 630
       }
     };
+    if (window.mapBlock.getIsMapActive()) {
+      var mouseMoveHandler = function (moveEvt) {
+        // Включение активного режима карты
+        window.mapBlock.isMapDisabled();
+        var shift = {
+          x: startCoords.x - moveEvt.clientX,
+          y: startCoords.y - moveEvt.clientY
+        };
 
-    var mouseMoveHandler = function (moveEvt) {
-      // Включение активного режима карты
-      window.mapBlock.isMapDisabled();
-      var shift = {
-        x: startCoords.x - moveEvt.clientX,
-        y: startCoords.y - moveEvt.clientY
+        startCoords = {
+          x: moveEvt.clientX,
+          y: moveEvt.clientY
+        };
+        var mainPinCoords = getMainPinPosition();
+        if (mainPinCoords.y - shift.y >= dragLimit.y.MIN && mainPinCoords.y - shift.y <= dragLimit.y.MAX) {
+          mainPin.style.top = mainPin.offsetTop - shift.y + 'px';
+        }
+        if (mainPinCoords.x - shift.x >= dragLimit.x.MIN && mainPinCoords.x - shift.x <= dragLimit.x.MAX) {
+          mainPin.style.left = mainPin.offsetLeft - shift.x + 'px';
+        }
+        window.mapForm.setPosition(mainPinCoords);
       };
-
-      startCoords = {
-        x: moveEvt.clientX,
-        y: moveEvt.clientY
+      var mouseUpHandler = function () {
+        document.removeEventListener('mousemove', mouseMoveHandler);
+        document.removeEventListener('mouseup', mouseUpHandler);
       };
-      var mainPinCoords = getMainPinPosition();
-      if (mainPinCoords.y - shift.y >= dragLimit.y.MIN && mainPinCoords.y - shift.y <= dragLimit.y.MAX) {
-        mainPin.style.top = mainPin.offsetTop - shift.y + 'px';
-      }
-      if (mainPinCoords.x - shift.x >= dragLimit.x.MIN && mainPinCoords.x - shift.x <= dragLimit.x.MAX) {
-        mainPin.style.left = mainPin.offsetLeft - shift.x + 'px';
-      }
-      window.mapForm.setPosition(mainPinCoords);
-    };
-    var mouseUpHandler = function () {
-      document.removeEventListener('mousemove', mouseMoveHandler);
-      document.removeEventListener('mouseup', mouseUpHandler);
-    };
-    document.addEventListener('mousemove', mouseMoveHandler);
-    document.addEventListener('mouseup', mouseUpHandler);
+      document.addEventListener('mousemove', mouseMoveHandler);
+      document.addEventListener('mouseup', mouseUpHandler);
+    }
   });
 
   window.mainPinBlock = {
