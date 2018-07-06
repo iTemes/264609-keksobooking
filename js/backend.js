@@ -14,7 +14,7 @@
   var LOAD_METHOD = 'GET';
   var UPLOAD_METHOD = 'POST';
 
-  var configXhr = function (loadHandler, errorHandler, url, method, timeout, data) {
+  var sendXhr = function (loadHandler, errorHandler, url, method, timeout, data) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
@@ -42,10 +42,10 @@
     }
   };
   var load = function (loadHandler, errorHandler) {
-    configXhr(loadHandler, errorHandler, URL_LOAD, LOAD_METHOD, LOAD_TIMEOUT);
+    sendXhr(loadHandler, errorHandler, URL_LOAD, LOAD_METHOD, LOAD_TIMEOUT);
   };
   var upload = function (data, loadHandler, errorHandler) {
-    configXhr(loadHandler, errorHandler, URL_UPLOAD, UPLOAD_METHOD, UPLOAD_TIMEOUT, data);
+    sendXhr(loadHandler, errorHandler, URL_UPLOAD, UPLOAD_METHOD, UPLOAD_TIMEOUT, data);
   };
 
   window.backend = {

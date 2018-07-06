@@ -15,40 +15,43 @@
   };
   // Отрисовка метки
   var renderPins = function (pins) {
-    for (var i = 0; i < pins.length; i++) {
-      var pinElement = configPin(pins[i]);
+    pins.forEach(function (pin) {
+      var pinElement = configPin(pin);
+      pinElements.push(pinElement);
+
       mapPinsGroup.appendChild(pinElement);
-      addPinClickHandler(pinElement, pins[i]);
-    }
+      addPinClickHandler(pinElement, pin);
+    });
   };
   // Удаление меток
   var removePins = function () {
-    var pinElements = document.querySelectorAll('.map__pin');
-    for (var i = 0; i < pinElements.length; i++) {
-      if (pinElements[i] !== window.mainPinBlock.mainPin) {
-        pinElements[i].remove();
-      }
-    }
+    pinElements.forEach(function (pin) {
+      pin.remove();
+    });
+    pinElements = [];
+  };
+  var activatePin = function (pinElement) {
+    pinElement.classList.add('map__pin--active');
   };
   var removeActivePin = function () {
-    var activePins = document.querySelectorAll('.map__pin--active');
-    for (var i = 0; i < activePins.length; i++) {
-      if (activePins[i].classList.contains('map__pin--active')) {
-        activePins[i].classList.remove('map__pin--active');
-      }
-    }
+    var activePins = pinElements.filter(function (pin) {
+      return pin.classList.contains('map__pin--active');
+    });
+
+    activePins.forEach(function (item) {
+      item.classList.remove('map__pin--active');
+    });
   };
   // Отрисовка карточки при нажатии на метку, закрытие карточки при переключении на другие метки
   var addPinClickHandler = function (pinElement, pin) {
     pinElement.addEventListener('click', function () {
-      var cardElem = window.popupCard.renderCard(pin);
-      var closeButton = cardElem.querySelector('.popup__close');
+      var cardElement = window.popupCard.renderCard(pin);
+
       window.popupCard.closeCard();
       removeActivePin();
-      pinElement.classList.add('map__pin--active');
-      closeButton.addEventListener('click', window.popupCard.closeCard);
-      document.addEventListener('keydown', window.popupCard.cardEscPressHandler);
-      window.mapBlock.map.insertBefore(cardElem, mapFiltersContainer);
+      activatePin(pinElement);
+
+      window.mapBlock.map.insertBefore(cardElement, mapFiltersContainer);
     });
   };
   // Секция перед которой идет вставка меток
@@ -56,7 +59,7 @@
   // Секция для вставки меток.
   var mapPinsGroup = document.querySelector('.map__pins');
   var mapPin = document.querySelector('template').content.querySelector('.map__pin');
-
+  var pinElements = [];
   window.configPinsBlock = {
     renderPins: renderPins,
     removePins: removePins,

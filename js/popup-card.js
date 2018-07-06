@@ -24,6 +24,7 @@
     var cardElement = mapCard.cloneNode(true);
     var cardFeatures = cardElement.querySelector('.popup__features');
     var cardPhotos = cardElement.querySelector('.popup__photos');
+    var closeButton = cardElement.querySelector('.popup__close');
 
     cardElement.querySelector('img').src = estateObject.author.avatar;
     cardElement.querySelector('.popup__title').textContent = estateObject.offer.title;
@@ -39,17 +40,19 @@
     cardPhotos.appendChild(renderPhotos(estateObject.offer.photos));
     isNodeEmpty(cardElement, cardPhotos);
 
+    closeButton.addEventListener('click', closeCard);
+    document.addEventListener('keydown', cardEscPressHandler);
+
     return cardElement;
   };
   var renderPhotos = function (photosArray) {
-    if (photosArray !== []) {
-      var photosFragment = document.createDocumentFragment();
-      for (var i = 0; i < photosArray.length; i++) {
-        var newPhoto = photoElem.cloneNode(true);
-        newPhoto.src = photosArray[i];
-        photosFragment.appendChild(newPhoto);
-      }
-    }
+    var photosFragment = document.createDocumentFragment();
+    photosArray.forEach(function (item) {
+      var newPhoto = photoElem.cloneNode(true);
+      newPhoto.src = item;
+      photosFragment.appendChild(newPhoto);
+    });
+
     return photosFragment;
   };
   var clearPhotoGroup = function () {
@@ -58,12 +61,12 @@
   var renderFeatures = function (features) {
     var featureFragment = document.createDocumentFragment();
 
-    for (var i = 0; i < features.length; i++) {
+    features.forEach(function (item) {
       var featureElement = document.createElement('li');
       featureElement.classList.add('popup__feature');
-      featureElement.classList.add('popup__feature--' + features[i]);
+      featureElement.classList.add('popup__feature--' + item);
       featureFragment.appendChild(featureElement);
-    }
+    });
     return featureFragment;
   };
   var convertOfferType = function (type) {
@@ -86,9 +89,9 @@
   var photoElem = photosGroup.querySelector('img');
   clearPhotoGroup();
 
+
   window.popupCard = {
     renderCard: renderCard,
-    cardEscPressHandler: cardEscPressHandler,
     closeCard: closeCard
   };
 })();

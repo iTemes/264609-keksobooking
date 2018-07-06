@@ -22,9 +22,24 @@
     message.textContent = textMessage;
     document.body.insertAdjacentElement('afterbegin', message);
   };
+  // Действия для закрытия ошибки при отправке формы
 
+  var closeErrorMessage = function () {
+    var error = document.querySelector('.error');
+
+    if (error) {
+      document.body.removeChild(error);
+    }
+
+    document.removeEventListener('click', errorClickHanler);
+  };
+
+  var errorClickHanler = function () {
+    closeErrorMessage();
+  };
 
   window.errorMessage = {
-    createErrorMessage: createErrorMessage
+    createErrorMessage: createErrorMessage,
+    errorClickHanler: errorClickHanler
   };
 })();

@@ -7,10 +7,19 @@
     addressField.value = position.x + ', ' + position.y;
   };
   var disableFields = function () {
-    for (var i = 0; i < fieldsForm.length; i++) {
-      fieldsForm[i].disabled = true;
-    }
+    fieldsForm.forEach(function (item) {
+      item.disabled = true;
+    });
+
     avatarLoadInput.disabled = true;
+  };
+
+  var enableFields = function () {
+    fieldsForm.forEach(function (item) {
+      item.disabled = false;
+    });
+
+    avatarLoadInput.disabled = false;
   };
   var disableForm = function () {
     resetAvatarLoad();
@@ -20,10 +29,7 @@
     infoForm.reset();
   };
   var enableForm = function () {
-    for (var i = 0; i < fieldsForm.length; i++) {
-      fieldsForm[i].disabled = false;
-    }
-    avatarLoadInput.disabled = false;
+    enableFields();
     infoForm.classList.remove('ad-form--disabled');
     clearRoomAndCopacity();
   };
@@ -47,18 +53,18 @@
     }
   };
   var timeInChangeHandler = function () {
-    for (var i = 0; i < timeIn.options.length; i++) {
-      if (timeIn.options[i].selected) {
+    Array.from(timeIn.options).forEach(function (item, i) {
+      if (item.selected) {
         timeOut.options[i].selected = true;
       }
-    }
+    });
   };
   var timeOutChangeHandler = function () {
-    for (var i = 0; i < timeOut.options.length; i++) {
-      if (timeOut.options[i].selected) {
+    Array.from(timeOut.options).forEach(function (item, i) {
+      if (item.selected) {
         timeIn.options[i].selected = true;
       }
-    }
+    });
   };
   var roomAndCapacityChangeHandler = function (evt) {
     if (roomNum.value === '100' && capacity.value !== '0') {
@@ -102,23 +108,10 @@
       closeSuccessMessage();
     }
   };
-  // Действия для закрытия ошибки при отправке формы
-  var closeErrorMessage = function () {
-    var error = document.querySelector('.error');
 
-    if (error) {
-      document.body.removeChild(error);
-    }
-
-    document.removeEventListener('click', errorClickHanler);
-  };
-  var errorClickHanler = function () {
-    closeErrorMessage();
-  };
   // Отрисовка сообщения  при возникновении ошибки
   var submitFormErrorHandler = function (textMessage) {
     window.errorMessage.createErrorMessage(textMessage);
-    document.addEventListener('click', errorClickHanler);
   };
 
   // Отправка данных формы на сервер
@@ -180,10 +173,8 @@
   };
 
   var clearPhotoContainer = function () {
-    var descriptionPhotos = document.querySelectorAll('.ad-form__photo');
-
-    descriptionPhotos.forEach(function (item) {
-      photoContainer.removeChild(item);
+    photoContainer.querySelectorAll('.ad-form__photo').forEach(function (item) {
+      item.remove();
     });
   };
 
@@ -217,7 +208,6 @@
   window.mapForm = {
     setPosition: setPosition,
     disableForm: disableForm,
-    enableForm: enableForm,
-    errorClickHanler: errorClickHanler
+    enableForm: enableForm
   };
 })();

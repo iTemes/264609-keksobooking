@@ -23,8 +23,7 @@
     x: '570px',
     y: '375px'
   };
-
-  mainPin.addEventListener('mousedown', function (evt) {
+  var mouseDownHandler = function (evt) {
     var startCoords = {
       x: evt.ClientX,
       y: evt.ClientY
@@ -68,7 +67,8 @@
       document.addEventListener('mousemove', mouseMoveHandler);
       document.addEventListener('mouseup', mouseUpHandler);
     }
-  });
+  };
+  mainPin.addEventListener('mousedown', mouseDownHandler);
 
   window.mainPinBlock = {
     mainPinStartCoords: mainPinStartCoords,

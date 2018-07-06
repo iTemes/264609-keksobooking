@@ -37,13 +37,15 @@
     return estateObject.offer.guests === +guestFilter.value || guestFilter.value === ANY_VALUE;
   };
   var everyFeaturesFilter = function (estateObject) {
-    var isFeature = true;
-    featuresFilter.forEach(function (feature) {
-      if (feature.checked && estateObject.offer.features.indexOf(feature.value) < 0) {
-        isFeature = false;
-      }
+    var checkedFeatures = Array.from(featuresFilter).filter(function (feature) {
+      return feature.checked;
     });
-    return isFeature;
+    if (checkedFeatures.length === 0) {
+      return true;
+    }
+    return checkedFeatures.every(function (feature) {
+      return estateObject.offer.features.indexOf(feature.value) > -1;
+    });
   };
   var checkOffer = function (offer) {
     return (sameHouseTypes(offer) &&
@@ -88,7 +90,6 @@
 
   var resetFilters = function () {
     mapFilter.reset();
-    mapFilter.removeEventListener('change', filterChangeHandler);
   };
 
   var mapFilter = document.querySelector('.map__filters');

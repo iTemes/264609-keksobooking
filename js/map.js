@@ -30,23 +30,22 @@
       window.mapBlock.enablePage();
     }
   };
-
-  var loadData = [];
-  var map = document.querySelector('.map');
   var successHandler = function (data) {
     loadData = data;
-    ismapActive = true;
+    isMapActive = true;
   };
 
   var erorrHandler = function (textMessage) {
     window.errorMessage.createErrorMessage(textMessage);
-    document.addEventListener('click', window.mapForm.errorClickHanler);
+    document.addEventListener('click', window.errorMessage.errorClickHanler);
   };
   window.backend.load(successHandler, erorrHandler);
+  var loadData = [];
+  var map = document.querySelector('.map');
 
   disablePage();
 
-  var ismapActive = false;
+  var isMapActive = false;
 
   window.mapBlock = {
     disablePage: disablePage,
@@ -57,7 +56,7 @@
       return loadData;
     },
     getIsMapActive: function () {
-      return ismapActive;
+      return isMapActive;
     }
   };
 })();
