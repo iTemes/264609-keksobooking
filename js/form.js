@@ -112,6 +112,7 @@
   // Отрисовка сообщения  при возникновении ошибки
   var submitFormErrorHandler = function (textMessage) {
     window.errorMessage.createErrorMessage(textMessage);
+    document.addEventListener('click', window.errorMessage.errorClickHanler);
   };
 
   // Отправка данных формы на сервер
